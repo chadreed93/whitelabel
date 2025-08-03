@@ -1,10 +1,27 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-import frappe
+import re
+from setuptools import setup, find_packages
 
-__version__ = '0.0.1'
+# read requirements
+with open("requirements.txt") as f:
+    install_requires = [line.strip() for line in f if line.strip()]
 
-if frappe.conf and frappe.conf.get("app_logo_url"):
-    __logo__ = frappe.conf.get("app_logo_url") or '/assets/whitelabel/images/whitelabel_logo.jpg'
-else:
-    __logo__ = '/assets/whitelabel/images/whitelabel_logo.jpg'
+# extract __version__ without importing the module
+_version_re = re.compile(r"__version__\s*=\s*['\"]([^'\"]+)['\"]")
+with open("whitelabel/__init__.py", "r", encoding="utf-8") as f:
+    content = f.read()
+match = _version_re.search(content)
+if not match:
+    raise RuntimeError("Unable to find version string in whitelabel/__init__.py")
+version = match.group(1)
+
+setup(
+    name="whitelabel",
+    version=version,
+    description="ERPNext Whitelabel",
+    author="Bhavesh Maheshwari",
+    author_email="maheshwaribhavesh95863@gmail.com",
+    packages=find_packages(),
+    include_package_data=True,
+    install_requires=install_requires,
+    zip_safe=False,
+)
